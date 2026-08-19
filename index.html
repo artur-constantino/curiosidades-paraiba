@@ -232,6 +232,43 @@
   @media (min-width:720px){
     .cards.duas{grid-template-columns:1fr 1fr;}
   }
+
+  /* ---------- MÚSICA ---------- */
+  #yt-player-wrap{
+    position:fixed;
+    width:1px; height:1px;
+    overflow:hidden;
+    left:-9999px; top:-9999px;
+  }
+  #music-btn{
+    position:fixed;
+    right:20px; bottom:20px;
+    z-index:55;
+    display:flex; align-items:center; gap:8px;
+    background:var(--ink);
+    color:var(--paper);
+    border:2px solid var(--gold);
+    border-radius:999px;
+    padding:12px 18px;
+    font-family:'Space Mono', monospace;
+    font-size:12px;
+    cursor:pointer;
+    transition:transform .15s ease;
+  }
+  #music-btn:hover{transform:scale(1.04);}
+  #music-btn:focus-visible{outline:3px solid var(--gold); outline-offset:3px;}
+  #music-btn:active{transform:scale(0.97);}
+  #music-btn .dot{
+    width:8px; height:8px; border-radius:50%;
+    background:var(--gold);
+  }
+  @media (prefers-reduced-motion:no-preference){
+    #music-btn.playing .dot{animation:blink 1.1s ease-in-out infinite;}
+  }
+  @keyframes blink{
+    0%,100%{opacity:1;}
+    50%{opacity:0.25;}
+  }
 </style>
 </head>
 <body>
@@ -352,6 +389,12 @@
   <p class="sig">feito com orgulho nordestino</p>
 </footer>
 
+<div id="yt-player-wrap"><div id="yt-player"></div></div>
+<button id="music-btn" type="button" aria-pressed="false">
+  <span class="dot" aria-hidden="true"></span>
+  <span id="music-btn-label">Tocar música</span>
+</button>
+
 <script>
   const bonus = [
     "Patos, no sertão paraibano, é apelidada de 'Princesa do Sertão'.",
@@ -389,6 +432,54 @@
   } else {
     cards.forEach(c => c.classList.add('in'));
   }
+
+  /* ---------- MÚSICA ---------- */
+  let ytPlayer = null;
+  let ytReady = false;
+  let wantsToPlay = false;
+
+  const musicBtn = document.getElementById('music-btn');
+  const musicLabel = document.getElementById('music-btn-label');
+
+  function setPlayingUI(isPlaying){
+    musicBtn.classList.toggle('playing', isPlaying);
+    musicBtn.setAttribute('aria-pressed', String(isPlaying));
+    musicLabel.textContent = isPlaying ? 'Pausar música' : 'Tocar música';
+  }
+
+  window.onYouTubeIframeAPIReady = function () {
+    ytPlayer = new YT.Player('yt-player', {
+      videoId: 'axO7f-V_8fM',
+      playerVars: { autoplay: 0, controls: 0 },
+      events: {
+        onReady: function () {
+          ytReady = true;
+          if (wantsToPlay) ytPlayer.playVideo();
+        },
+        onStateChange: function (e) {
+          setPlayingUI(e.data === YT.PlayerState.PLAYING);
+        }
+      }
+    });
+  };
+
+  const ytScript = document.createElement('script');
+  ytScript.src = 'https://www.youtube.com/iframe_api';
+  document.head.appendChild(ytScript);
+
+  musicBtn.addEventListener('click', () => {
+    if (!ytReady) {
+      wantsToPlay = true;
+      musicLabel.textContent = 'Carregando…';
+      return;
+    }
+    const state = ytPlayer.getPlayerState();
+    if (state === YT.PlayerState.PLAYING) {
+      ytPlayer.pauseVideo();
+    } else {
+      ytPlayer.playVideo();
+    }
+  });
 </script>
 
 </body>
