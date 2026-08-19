@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Paraíba — o estado que vê o sol primeiro</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bevan&family=Karla:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1c140f;
+    --paper:#f3e9d2;
+    --paper-2:#ece0c4;
+    --night:#241436;
+    --wine:#7a2c3b;
+    --burnt:#c1502e;
+    --gold:#f2b705;
+    --sea:#0f4c5c;
+    --leaf:#395c41;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    font-family:'Karla', sans-serif;
+    color:var(--ink);
+    background:var(--paper);
+    overflow-x:hidden;
+  }
+  h1,h2,.eyebrow{font-family:'Bevan', serif;}
+  .mono{font-family:'Space Mono', monospace;}
+
+  a{color:inherit;}
+
+  /* ---------- TOPO ---------- */
+  .topbar{
+    position:sticky; top:0; z-index:50;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:14px 20px;
+    background:rgba(28,20,16,0.92);
+    color:var(--paper);
+  }
+  .topbar .mark{font-family:'Bevan',serif; font-size:15px; letter-spacing:0.06em;}
+  .topbar button{
+    font-family:'Space Mono', monospace;
+    font-size:12px;
+    background:transparent;
+    border:1.5px solid var(--paper);
+    color:var(--paper);
+    padding:8px 14px;
+    cursor:pointer;
+    border-radius:999px;
+    transition:transform .15s ease, background .15s ease;
+  }
+  .topbar button:hover{background:var(--paper); color:var(--ink);}
+  .topbar button:focus-visible{outline:3px solid var(--gold); outline-offset:2px;}
+  .topbar button:active{transform:scale(0.96);}
+
+  #toast{
+    position:fixed; left:50%; bottom:26px; transform:translate(-50%, 20px);
+    max-width:min(480px, 88vw);
+    background:var(--ink); color:var(--paper);
+    border:2px solid var(--gold);
+    padding:16px 20px;
+    font-size:14px; line-height:1.5;
+    opacity:0; pointer-events:none;
+    transition:opacity .25s ease, transform .25s ease;
+    z-index:60;
+  }
+  #toast.show{opacity:1; transform:translate(-50%, 0);}
+
+  /* ---------- HERO ---------- */
+  .hero{
+    min-height:100vh;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center;
+    padding:100px 20px 60px;
+    background:linear-gradient(180deg, var(--night) 0%, var(--wine) 48%, var(--burnt) 78%, var(--gold) 100%);
+    position:relative;
+    overflow:hidden;
+  }
+  .sun{
+    width:120px; height:120px; border-radius:50%;
+    background:var(--gold);
+    box-shadow:0 0 0 10px rgba(242,183,5,0.18);
+    margin-bottom:28px;
+  }
+  @media (prefers-reduced-motion:no-preference){
+    .sun{animation:pulse 4s ease-in-out infinite;}
+  }
+  @keyframes pulse{
+    0%,100%{transform:scale(1);}
+    50%{transform:scale(1.06);}
+  }
+  .hero .eyebrow{
+    color:var(--gold);
+    font-size:13px; letter-spacing:0.18em;
+    margin-bottom:14px;
+  }
+  .hero h1{
+    color:var(--paper);
+    font-size:clamp(2.6rem, 9vw, 6rem);
+    line-height:0.95;
+    letter-spacing:0.01em;
+  }
+  .hero p{
+    color:var(--paper-2);
+    max-width:520px;
+    margin:22px auto 0;
+    font-size:17px;
+    line-height:1.6;
+  }
+  .hero .down{
+    margin-top:46px;
+    color:var(--paper);
+    font-size:12px;
+    letter-spacing:0.14em;
+  }
+
+  /* ---------- SEÇÕES DO DIA ---------- */
+  section.periodo{
+    padding:90px 20px;
+  }
+  .periodo-inner{
+    max-width:760px;
+    margin:0 auto;
+  }
+  .periodo-label{
+    display:flex; align-items:center; gap:12px;
+    margin-bottom:36px;
+  }
+  .periodo-label .hora{
+    font-size:13px;
+    padding:5px 10px;
+    border:1.5px solid var(--ink);
+  }
+  .periodo-label .nome{
+    font-size:13px;
+    letter-spacing:0.16em;
+    text-transform:uppercase;
+  }
+  .periodo-label::after{
+    content:"";
+    flex:1;
+    height:1.5px;
+    background:var(--ink);
+    opacity:0.25;
+  }
+
+  .cards{
+    display:grid;
+    gap:36px;
+  }
+  .card{
+    position:relative;
+    background:var(--paper);
+    border:3px solid var(--ink);
+    padding:30px 28px 26px;
+    opacity:0; transform:translateY(24px);
+    transition:opacity .6s ease, transform .6s ease;
+  }
+  .card::before{
+    content:"";
+    position:absolute; inset:8px -8px -8px 8px;
+    border:3px solid var(--ink);
+    z-index:-1;
+    opacity:0.35;
+  }
+  .card.in{opacity:1; transform:translateY(0);}
+  @media (prefers-reduced-motion:reduce){
+    .card{transition:none; opacity:1; transform:none;}
+  }
+  .card h2{
+    font-size:clamp(1.35rem, 3vw, 1.8rem);
+    line-height:1.15;
+    margin-bottom:12px;
+  }
+  .card p{
+    font-size:15.5px;
+    line-height:1.7;
+  }
+  .card .tag{
+    display:inline-block;
+    font-family:'Space Mono', monospace;
+    font-size:11px;
+    letter-spacing:0.08em;
+    padding:3px 9px;
+    margin-bottom:14px;
+    border:1.5px solid var(--ink);
+  }
+
+  .madrugada{background:linear-gradient(180deg,#2a1938,#5a2338);}
+  .madrugada .periodo-label, .madrugada .periodo-label::after{color:var(--paper); background:transparent;}
+  .madrugada .periodo-label .hora{color:var(--paper); border-color:var(--paper);}
+  .madrugada .card{background:var(--paper);}
+
+  .manha{background:linear-gradient(180deg,#f6e7c4,#f3e9d2);}
+  .tarde{background:linear-gradient(180deg,#f2d9a8,#ecc98a);}
+  .entardecer{background:linear-gradient(180deg,#e79a5d,#c1502e); color:var(--paper);}
+  .entardecer .periodo-label .hora{border-color:var(--paper);}
+  .entardecer .card{background:var(--paper); color:var(--ink);}
+  .noite{background:linear-gradient(180deg,#3a2038,#1c1023); color:var(--paper);}
+  .noite .periodo-label .hora{border-color:var(--paper);}
+  .noite .card{background:var(--paper); color:var(--ink);}
+
+  /* ---------- RODAPÉ ---------- */
+  footer{
+    background:var(--ink);
+    color:var(--paper);
+    text-align:center;
+    padding:60px 20px 50px;
+  }
+  footer h2{
+    font-size:clamp(1.6rem, 5vw, 2.4rem);
+    margin-bottom:14px;
+  }
+  footer p{
+    max-width:480px;
+    margin:0 auto;
+    color:var(--paper-2);
+    font-size:15px;
+    line-height:1.6;
+  }
+  footer .sig{
+    margin-top:32px;
+    font-family:'Space Mono', monospace;
+    font-size:12px;
+    color:var(--gold);
+    letter-spacing:0.08em;
+  }
+
+  @media (min-width:720px){
+    .cards.duas{grid-template-columns:1fr 1fr;}
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <span class="mark">PB · CURIOSIDADES</span>
+  <button id="btn-random" type="button">Curiosidade aleatória</button>
+</div>
+
+<div id="toast" role="status" aria-live="polite"></div>
+
+<header class="hero">
+  <div class="sun" aria-hidden="true"></div>
+  <p class="eyebrow">04H46 · PONTA DO SEIXAS, JOÃO PESSOA</p>
+  <h1>PARAÍBA</h1>
+  <p>Todo santo dia, antes de qualquer outro canto do continente, é aqui que o sol nasce primeiro nas Américas. Role a página e acompanhe seis curiosidades espalhadas ao longo de um dia paraibano.</p>
+  <p class="down mono">role para o dia começar ↓</p>
+</header>
+
+<section class="periodo madrugada">
+  <div class="periodo-inner">
+    <div class="periodo-label">
+      <span class="hora mono">04:46</span>
+      <span class="nome" style="color:var(--paper)">Madrugada</span>
+    </div>
+    <div class="cards">
+      <article class="card">
+        <span class="tag">Geografia</span>
+        <h2>O sol nasce aqui primeiro</h2>
+        <p>Na Ponta do Seixas, em João Pessoa, fica o ponto mais oriental das Américas. É por isso que, todos os dias, a Paraíba é o primeiro lugar do continente a receber a luz do sol — antes do Rio, antes de Nova York, antes de qualquer outra cidade ao norte ou ao sul.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="periodo manha">
+  <div class="periodo-inner">
+    <div class="periodo-label">
+      <span class="hora mono">08:00</span>
+      <span class="nome">Manhã</span>
+    </div>
+    <div class="cards duas">
+      <article class="card">
+        <span class="tag">Cidade</span>
+        <h2>Jampa, a capital quase quatro vezes centenária</h2>
+        <p>João Pessoa foi fundada em 1585 e é lembrada como uma das cidades mais antigas do Brasil. Os moradores chamam a capital de "Jampa" — um apelido tão antigo quanto carinhoso, que ninguém explica direito, mas que colou de vez.</p>
+      </article>
+      <article class="card">
+        <span class="tag">Natureza urbana</span>
+        <h2>Uma capital dentro da mata</h2>
+        <p>Em plena área urbana de João Pessoa fica a Mata do Buraquinho, um pedaço preservado de Mata Atlântica. É um dos motivos pelos quais a cidade costuma aparecer entre as capitais mais verdes do Brasil.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="periodo tarde">
+  <div class="periodo-inner">
+    <div class="periodo-label">
+      <span class="hora mono">14:30</span>
+      <span class="nome">Tarde</span>
+    </div>
+    <div class="cards duas">
+      <article class="card">
+        <span class="tag">Paleontologia</span>
+        <h2>Pegadas com 80 milhões de anos</h2>
+        <p>No sertão paraibano, a cidade de Sousa guarda o Vale dos Dinossauros: milhares de pegadas fossilizadas deixadas por répteis gigantes que caminharam por ali muito antes de existir caatinga, sertão ou gente por perto.</p>
+      </article>
+      <article class="card">
+        <span class="tag">Litoral</span>
+        <h2>Uma ilha em forma de coração</h2>
+        <p>Perto de Cabedelo, a Ilha de Areia Vermelha só aparece na maré baixa — um banco de areia e recifes que emerge do mar por poucas horas do dia e que, visto de cima, lembra um coração desenhado na água.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="periodo entardecer">
+  <div class="periodo-inner">
+    <div class="periodo-label">
+      <span class="hora mono">18:15</span>
+      <span class="nome">Entardecer</span>
+    </div>
+    <div class="cards duas">
+      <article class="card">
+        <span class="tag">Festa</span>
+        <h2>O maior São João do mundo (segundo os próprios)</h2>
+        <p>Em junho, Campina Grande se declara sede do "Maior São João do Mundo", com decoração de rua em escala industrial, comida típica e semanas seguidas de forró. É um título disputado com o Nordeste inteiro, mas defendido com muito orgulho local.</p>
+      </article>
+      <article class="card">
+        <span class="tag">Artesanato</span>
+        <h2>Paisagens dentro de uma garrafa</h2>
+        <p>Nas cidades de Areia e Picuí, artesãos criam desenhos e paisagens inteiras usando camadas de areia colorida dentro de garrafas de vidro — uma técnica que virou símbolo do artesanato paraibano.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="periodo noite">
+  <div class="periodo-inner">
+    <div class="periodo-label">
+      <span class="hora mono">21:00</span>
+      <span class="nome">Noite</span>
+    </div>
+    <div class="cards">
+      <article class="card">
+        <span class="tag">Cultura</span>
+        <h2>Poesia de cordel e sanfona</h2>
+        <p>A Paraíba tem tradição forte na literatura de cordel — poemas populares impressos em folhetos ilustrados com xilogravuras, vendidos em feiras e praças — e ajudou a moldar o forró que hoje toca em festas por todo o Brasil.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <h2>Seis fatos, um estado só</h2>
+  <p>Tem mais coisa curiosa espalhada por aí. Aperte o botão lá em cima e vai descobrindo aos poucos.</p>
+  <p class="sig">feito com orgulho nordestino</p>
+</footer>
+
+<script>
+  const bonus = [
+    "Patos, no sertão paraibano, é apelidada de 'Princesa do Sertão'.",
+    "O sururu, um molusco de rio, é prato típico do litoral paraibano.",
+    "O escritor Ariano Suassuna, criador do Movimento Armorial, nasceu em João Pessoa, em 1927.",
+    "A Paraíba faz fronteira com Rio Grande do Norte, Ceará e Pernambuco, além do Oceano Atlântico.",
+    "Campina Grande é conhecida como a 'Rainha da Borborema', a serra que corta o interior do estado."
+  ];
+
+  const btn = document.getElementById('btn-random');
+  const toast = document.getElementById('toast');
+  let toastTimer = null;
+
+  btn.addEventListener('click', () => {
+    const fact = bonus[Math.floor(Math.random() * bonus.length)];
+    toast.textContent = fact;
+    toast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove('show'), 5200);
+  });
+
+  const cards = document.querySelectorAll('.card');
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if ('IntersectionObserver' in window && !reduceMotion) {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.2 });
+    cards.forEach(c => io.observe(c));
+  } else {
+    cards.forEach(c => c.classList.add('in'));
+  }
+</script>
+
+</body>
+</html>
