@@ -2,7 +2,7 @@
 
 Site de página única sobre curiosidades da Paraíba, estruturado como um dia paraibano — da madrugada à noite — inspirado no fato de que o estado tem o ponto mais oriental das Américas e é o primeiro lugar do continente a ver o sol nascer todos os dias.
 
-**[Ver demo ao vivo](https://artur-constantino.github.io/curiosidades-paraiba.html/)**
+**[Ver demo ao vivo](https://artur-constantino.github.io/curiosidades-paraiba/)**
 
 ## Sobre
 
